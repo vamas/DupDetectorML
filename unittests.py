@@ -46,7 +46,7 @@ class TestSum(unittest.TestCase):
         dataset = [['Bobba', '34343', 'Rabbit at walk'],
                     ['Hubble', '9843', 'Nirvan at work is bs223'],
                     ['Bobba Smithy', '11', 'Lobotomia is good for idiots']]
-        rules = {
+        rules = [{
             0: {'rule_RandomTypo': ['alpha', 2, 'replace'],
                     'rule_ScrambleWords': [],
                     'rule_DuplicateNumericSequence': [2],
@@ -65,7 +65,7 @@ class TestSum(unittest.TestCase):
                     'rule_RemoveSpecialSymbols': [],
                     'rule_RemoveStopWords': [],
                     'rule_IncreaseWeightOfShortWords':[]}
-        }
+        }]
         transformer = TransformDataset(rules)
         result = transformer.execute(dataset)
         self.assertEqual(len(dataset), len(result), "Row number in input and output datasets is different")
@@ -75,7 +75,7 @@ class TestSum(unittest.TestCase):
         dataset = [['Bobba', '34343', 'Rabbit at walk'],
                     ['Hubble', '9843', 'Nirvan at work is bs223'],
                     ['Bobba Smithy', '11', 'Lobotomia is good for idiots']]
-        rules = {
+        rules = [{
             1: {'rule_Replace': ['none',''],
                     'rule_RandomTypo': ['alpha', 2, 'replace'],
                     'rule_ScrambleWords': [],
@@ -89,7 +89,7 @@ class TestSum(unittest.TestCase):
                     'rule_RemoveSpecialSymbols': [],
                     'rule_RemoveStopWords': [],
                     'rule_IncreaseWeightOfShortWords':[]}
-        }
+        }]
         transformer = TransformDataset(rules)
         result = transformer.execute(dataset)
         self.assertEqual('Bobba', result[0][0], "No transformation expected on the column 0")

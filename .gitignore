@@ -2,3 +2,7 @@ MDM_Organization_GenerateTrainingData.ipynb
 *.pyc
 *-checkpoint.ipynb
 train_input.csv
+MDM_Organization_Training.ipynb
+MDM_Organization_Predicting.ipynb
+TrainedModel.sav
+prediction_input.csv
