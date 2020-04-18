@@ -46,7 +46,7 @@ def increaseWeightOfLongestNumericSequence(df, columns):
 class DatasetBuilder(object):
 
     def __init__(self, datasource_columns, datasource_index, one_hot_encoding_columns, 
-        text_metrics, pass_through_columns, alteration_rules, high_importance_columns, workers):
+        text_metrics, pass_through_columns, alteration_rules, high_importance_columns, workers, logging_level):
         self.datasource_columns = datasource_columns
         self.datasource_index = datasource_index
         self.one_hot_encoding_columns = one_hot_encoding_columns
@@ -55,6 +55,7 @@ class DatasetBuilder(object):
         self.alteration_rules = alteration_rules        
         self.high_importance_columns = high_importance_columns
         self.workers = workers
+        self.logging_level = logging_level
 
     def getCompleteDataset(self):
         return self.completeData
@@ -86,15 +87,19 @@ class DatasetBuilder(object):
 
     def calculateMetrics(self, dataset, altered_dataset):
         merged_dataset = self.datasetsProduct(dataset, altered_dataset)
-        print(merged_dataset)
+        columns_tuples = [(col + '_x', col + '_y', col) for col in 
+            list(set([e.replace('_x','').replace('_y','') for e in self.datasource_columns 
+            if e not in self.pass_through_columns]))]
+        pass_through_columns_tuples = [(col + '_x', col + '_y', col) for col in 
+            list(set([e.replace('_x','').replace('_y','') for e in self.pass_through_columns]))]
         calculator = MetricsCalculator(
                                metrics = self.text_metrics,
                                workers = self.workers,                               
                                dataset = merged_dataset,
-                               columns = self.datasource_columns,
-                               pass_through_columns = self.pass_through_columns)
+                               columns = columns_tuples,
+                               pass_through_columns = pass_through_columns_tuples,
+                               logging_level = self.logging_level)
         calculated = calculator.calculate()
-        print(calculated)
         return merged_dataset, calculated
 
     def datasetsProduct(self, dataset1, dataset2):
