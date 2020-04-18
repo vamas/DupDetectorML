@@ -2,7 +2,7 @@ import pandas as pd
 from sklearn import preprocessing
 import re
 from texttransformation import TransformDataset
-from metrics import MetricsConfig, MetricsCalculator
+from metrics import MetricsCalculator
 
 def doLabel(a, b):
     if a == b:
@@ -46,7 +46,7 @@ def increaseWeightOfLongestNumericSequence(df, columns):
 class DatasetBuilder(object):
 
     def __init__(self, datasource_columns, datasource_index, one_hot_encoding_columns, 
-        text_metrics, pass_through_columns, alteration_rules, high_importance_columns):
+        text_metrics, pass_through_columns, alteration_rules, high_importance_columns, workers):
         self.datasource_columns = datasource_columns
         self.datasource_index = datasource_index
         self.one_hot_encoding_columns = one_hot_encoding_columns
@@ -54,6 +54,7 @@ class DatasetBuilder(object):
         self.pass_through_columns = pass_through_columns
         self.alteration_rules = alteration_rules        
         self.high_importance_columns = high_importance_columns
+        self.workers = workers
 
     def getCompleteDataset(self):
         return self.completeData
@@ -84,12 +85,24 @@ class DatasetBuilder(object):
         return pd.DataFrame(transformer.execute(dataset.values.tolist()), columns=self.datasource_columns)
 
     def calculateMetrics(self, dataset, altered_dataset):
-        metrics_config = MetricsConfig(self.text_metrics)
-        calculator = MetricsCalculator(columns=self.datasource_columns, 
-                               pass_through_columns=self.pass_through_columns,
-                               metrics_config=metrics_config)
-        return calculator.applyMetrics(dataset, altered_dataset)
+        merged_dataset = self.datasetsProduct(dataset, altered_dataset)
+        print(merged_dataset)
+        calculator = MetricsCalculator(
+                               metrics = self.text_metrics,
+                               workers = self.workers,                               
+                               dataset = merged_dataset,
+                               columns = self.datasource_columns,
+                               pass_through_columns = self.pass_through_columns)
+        calculated = calculator.calculate()
+        print(calculated)
+        return merged_dataset, calculated
 
+    def datasetsProduct(self, dataset1, dataset2):
+        df_source_1 = dataset1.copy()
+        df_target_1 = dataset2.copy()
+        df_source_1['Key'] = 0
+        df_target_1['Key'] = 0
+        return df_source_1.merge(df_target_1, left_on = ["Key"], right_on = ["Key"]).reset_index()
 
     def addLabel(self, dataset):
         dataset['Label'] = dataset.apply(lambda row: 

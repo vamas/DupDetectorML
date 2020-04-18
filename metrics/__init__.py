@@ -1,2 +1,1 @@
-from .metricscalculator import MetricsCalculator
-from .metricsconfig import MetricsConfig
+from .metrics import MetricsCalculator
