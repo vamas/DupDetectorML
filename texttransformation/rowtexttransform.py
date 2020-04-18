@@ -7,15 +7,15 @@ class RowTextTransform(object):
 
     def execute(self, row):
         if row != None:
-            result = []
+            result = []            
             column_index = 0
             for value in row:
+                row_copy = row.copy()
                 if column_index in self.transform_rules.keys():
                     column_rule = self.transform_rules[column_index]
                     transformer = StringTransform(column_rule)
-                    result.append(transformer.execute(value))
-                else:
-                    result.append(value)
+                    row_copy[column_index] = transformer.execute(value)
+                result.append(row_copy)
                 column_index = column_index + 1
             return result
         return None
