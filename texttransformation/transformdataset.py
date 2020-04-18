@@ -23,7 +23,7 @@ class TransformDataset(object):
         '''
         result = []
         for ruleset_index in range(0, len(self.transform_rules)):
-            result = result + self.executeRuleset(dataset, self.transform_rules[ruleset_index])
+            result = result + [item for sublist in self.executeRuleset(dataset, self.transform_rules[ruleset_index]) for item in sublist]
         return result
 
 

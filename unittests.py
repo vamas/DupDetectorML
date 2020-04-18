@@ -1,6 +1,6 @@
 import unittest
 from texttransformation import StringTransform, RowTextTransform, TransformDataset
-from metrics import CalculateMetric
+from metrics import MetricsCalculator
 
 class TestSum(unittest.TestCase):
 
@@ -46,7 +46,7 @@ class TestSum(unittest.TestCase):
     def test_TransformDataset(self):
         dataset = [['Bobba', '34343', 'Rabbit at walk'],
                     ['Hubble', '9843', 'Nirvan at work is bs223'],
-                    ['Bobba Smithy', '11', 'Lobotomia is good for idiots']]
+                    ['Bobba Smithy', '11', 'Lobotomia is good']]
         rules = [{
             0: {'rule_RandomTypo': ['alpha', 2, 'replace'],
                     'rule_ScrambleWords': [],
@@ -69,7 +69,7 @@ class TestSum(unittest.TestCase):
         }]
         transformer = TransformDataset(rules)
         result = transformer.execute(dataset)
-        self.assertEqual(len(dataset), len(result), "Row number in input and output datasets is different")
+        self.assertEqual(len(dataset)*3, len(result), "Row number in input and output datasets is different")
 
 
     def test_TransformDatasetNoTransformationOnFirstColumn(self):
@@ -94,47 +94,21 @@ class TestSum(unittest.TestCase):
         transformer = TransformDataset(rules)
         result = transformer.execute(dataset)
         self.assertEqual('Bobba', result[0][0], "No transformation expected on the column 0")
-        self.assertEqual('Hubble', result[1][0], "No transformation expected on the column 0")
-        self.assertEqual('Bobba Smithy', result[2][0], "No transformation expected on the column 0")
+        self.assertEqual('Bobba', result[1][0], "No transformation expected on the column 0")
+        self.assertEqual('Bobba', result[2][0], "No transformation expected on the column 0")
+        self.assertEqual('Hubble', result[3][0], "No transformation expected on the column 0")
+        self.assertEqual('Hubble', result[4][0], "No transformation expected on the column 0")
+        self.assertEqual('Hubble', result[5][0], "No transformation expected on the column 0")
+        self.assertEqual('Bobba Smithy', result[6][0], "No transformation expected on the column 0")
+        self.assertEqual('Bobba Smithy', result[7][0], "No transformation expected on the column 0")
+        self.assertEqual('Bobba Smithy', result[8][0], "No transformation expected on the column 0")
+
 
     def test_ReplaceRule(self):
         value = 'none'
         stringTransform = StringTransform({'rule_Replace': ['none', '']})
         result = stringTransform.execute(value)
         self.assertEqual(result, '', 'rule_Replace not working')
-
-    def test_MetricLevenshteinDistance(self):
-        self.assertEqual(CalculateMetric("testing","test1","distance"), 3, 'Levenshtein distance is incorrect')
-
-    def test_MetricRatioDistance(self):
-        self.assertEqual(CalculateMetric("testing","test1","ratio"), 67, 'Ratio is incorrect')
-
-    def test_MetricPartialRatioDistance(self):
-        self.assertEqual(CalculateMetric("testing","test1","partial_ratio"), 80, 'PartialRatio is incorrect')
-
-    def test_MetricTokenSortRatioDistance(self):
-        self.assertEqual(CalculateMetric("testing","test1","token_sort_ratio"), 67, 'TokenSortRatio is incorrect')
-
-    def test_MetricTokenSetRatioDistance(self):
-        self.assertEqual(CalculateMetric("testing","test1","token_set_ratio"), 67, 'TokenSetRatio is incorrect')
-
-    def test_MetricLRatioDistance(self):
-        self.assertEqual(CalculateMetric("testing","test1","l_ratio"), 0.6666666666666666, 'LRatio is incorrect')
-
-    def test_MetricJaroDistance(self):
-        self.assertEqual(CalculateMetric("testing","test1","jaro"), 0.7904761904761904, 'Jaro is incorrect')
-
-    def test_MetricJaroWinklerDistance(self):
-        self.assertEqual(CalculateMetric("testing","test1","jaro_winkler"), 0.8742857142857143, 'JaroWinkler is incorrect')
-
-    def test_MetricSetRatioDistance(self):
-        self.assertEqual(round(CalculateMetric("testing","test1","setratio"),2), 0.67, 'SetRatio is incorrect')
-
-    def test_MetricSeqRatioDistance(self):
-        self.assertEqual(round(CalculateMetric("testing","test1","seqratio")), 1, 'SeqRatio is incorrect')
-
-    def test_MetricLongestNumSeqDistance(self):
-        self.assertEqual(CalculateMetric("testing","test123232","longestnumericseq"), 6, 'LongestNumSeq is incorrect')
 
 if __name__ == '__main__':
     unittest.main()
