@@ -19,7 +19,7 @@ class Predictor(object):
     def __init__(self, model):
         self.model = model
 
-    def execute(self, dataset, datasetcomplete):
+    def execute(self, dataset):
         X = dataset
         X, X = Normalize(X, X)
         pred_result = self.model.predict(X)

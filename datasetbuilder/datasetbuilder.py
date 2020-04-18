@@ -60,6 +60,9 @@ class DatasetBuilder(object):
     def getCompleteDataset(self):
         return self.completeData
 
+    def indexTuple(self):
+        return (self.datasource_index + '_x', datasource_index + '_y')
+
     def generateTrainingDataset(self, dataset):
         enrichedData = self.enrichData(dataset)
         alteredData = self.alterateData(enrichedData)
@@ -69,9 +72,10 @@ class DatasetBuilder(object):
         self.trainingDataset = oneHotEncodedData
         return self.trainingDataset
 
-    def generatePredictionDataset(self, dataset):
-        enrichedData = self.enrichData(dataset)
-        self.completeData, meteredData = self.calculateMetrics(enrichedData, enrichedData)
+    def generatePredictionDataset(self, dataset_searching, dataset_searched):
+        dataset_searching_enrichedData = self.enrichData(dataset_searching)
+        dataset_searched_enrichedData = self.enrichData(dataset_searched)
+        self.completeData, meteredData = self.calculateMetrics(dataset_searching_enrichedData, dataset_searched_enrichedData)
         oneHotEncodedData = self.addOneHotEncodings(meteredData)
         self.predictingDataset = oneHotEncodedData
         return self.predictingDataset
